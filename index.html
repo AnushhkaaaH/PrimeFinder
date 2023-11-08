@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+ <style>
+   table {
+     border-collapse: collapse;
+     width: 80%;
+     margin: 20px auto;
+   }
+   table, td {
+     border: 1px solid white;
+     color: aliceblue;
+     background-color: rgb(40, 130, 93);
+   }
+   th {
+    border: 1px solid white;
+    color:yellowgreen;
+   }
+   th, td {
+     padding: 8px;
+     text-align: center;
+   }
+
+ </style>
+</head>
+
+<body>
+        <div class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">Prime Number Finder</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+        </div>
+            <label>Start: <input type="text" id="startInput"></label>
+            <label class="m-4">End: <input type="text" id="endInput"></label> <br>
+            <button class="btn btn-dark m-2" onclick="findPrimes()">Find Primes</button>
+            <div id="results"></div>
+
+ <script>
+   function isPrime(number) {
+     if (number <= 1) return 'Normal';
+     if (number <= 3) return 'Prime';
+     if (number % 2 === 0 || number % 3 === 0) return 'Normal';
+     for (let i = 5; i * i <= number; i += 6) {
+       if (number % i === 0 || number % (i + 2) === 0) return 'Normal';
+     }
+     return 'Prime';
+   }
+
+   function findPrimes() {
+     const start = parseInt(document.getElementById("startInput").value);
+     const end = parseInt(document.getElementById("endInput").value);
+
+     const startTime = performance.now();
+     const results = [];
+
+     let totalTime = 0;
+     let singleCheckTime = 0;
+
+     for (let i = start; i <= end; i++) {
+       const generationStart = performance.now();
+       const status = isPrime(i);
+       const generationEnd = performance.now();
+       const generationTime = generationEnd - generationStart;
+
+       singleCheckTime += generationTime;
+
+       results.push({
+         number: i,
+         status: status,
+         generationTime: generationTime.toFixed(2),
+         singleCheckTime: singleCheckTime.toFixed(2)
+       });
+     }
+     const endTime = performance.now();
+
+     const resultsDiv = document.getElementById("results");
+     resultsDiv.innerHTML = `
+       <table>
+        <tr>
+          <th>Number</th>
+          <th>Status</th>
+          <th>Generation Time (ms)</th>
+          <th>Single Check Time (ms)</th>
+        </tr>
+        ${results.map(r => `
+          <tr>
+            <td>${r.number}</td>
+            <td>${r.status}</td>
+            <td>${r.generationTime}</td>
+            <td>${r.singleCheckTime}</td>
+          </tr>`).join("")}
+      </table>
+      <p>Total Time: ${endTime - startTime} ms</p>
+     `;
+   }
+ </script>
+</body>
+</html>
